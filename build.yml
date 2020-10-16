@@ -1,0 +1,72 @@
+---
+
+- hosts: localhost
+  become: yes
+  vars:
+    ansible_python_interpreter: "/usr/bin/python3"
+    user_account: livestreamer
+  tasks:
+    - name: Install packages
+      apt:
+        name:
+          - xfce4
+          - lxdm
+          - ffmpeg
+          - apt-transport-https
+        state: present
+    
+    - name: Add user
+      user:
+        name: "{{ user_account }}"
+        comment: Live Streaming Account
+        shell: /bin/bash
+        password: $6$2gWBH7wh$oLxRm7vou/.ll/3x7TBW3uuSiizUBnYlv/FLyd3m1KW7DrtIWKuMUBReiwCY8scy0g35aSETpdwiHdjN0I/qW0
+    
+    - name: Configure autologin
+      lineinfile:
+        path: /etc/lxdm/lxdm.conf
+        regexp: '^autologin '
+        insertafter: '^#autologin '
+        line: autologin {{ user_account }}
+
+    - name: Configure session
+      lineinfile:
+        path: /etc/lxdm/lxdm.conf
+        regexp: '^session='
+        insertafter: '^#session='
+        line: session=/usr/bin/startxfce4
+
+    - name: Add OBS key
+      apt_key:
+        keyserver: keyserver.ubuntu.com
+        id: BC7345F522079769F5BBE987EFC71127F425E228
+
+    - name: Add UBSMS key
+      apt_key:
+        keyserver: keyserver.ubuntu.com
+        id: 01F247E1FD92FAEBAE4A6AA3C289C0092B6C24A2
+    
+    - name: Apt repository
+      apt_repository:
+        repo: deb https://ubsms.github.io/repo/ubuntu/ bionic main
+        state: present
+        update_cache: True
+    
+    - name: Add OBS PPA
+      apt_repository:
+        repo: ppa:obsproject/obs-studio
+        state: present
+        update_cache: True
+    
+    - name: Install OBS
+      apt:
+        name: obs-studio
+        state: present
+    
+    - name: Install CasparCG
+      apt:
+        name:
+          - casparcg-server
+          - casparcg-media-scanner
+        state: present
+    
