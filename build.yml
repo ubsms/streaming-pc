@@ -13,6 +13,7 @@
           - lxdm
           - ffmpeg
           - apt-transport-https
+          - plymouth-themes
         state: present
     
     - name: Add user
@@ -25,15 +26,15 @@
     - name: Configure autologin
       lineinfile:
         path: /etc/lxdm/lxdm.conf
-        regexp: '^autologin '
-        insertafter: '^#autologin '
-        line: autologin {{ user_account }}
+        regexp: '^autologin='
+        insertbefore: '\[server\]'
+        line: autologin={{ user_account }}
 
     - name: Configure session
       lineinfile:
         path: /etc/lxdm/lxdm.conf
         regexp: '^session='
-        insertafter: '^#session='
+        insertbefore: '\[server\]'
         line: session=/usr/bin/startxfce4
 
     - name: Add OBS key
@@ -68,5 +69,11 @@
         name:
           - casparcg-server
           - casparcg-media-scanner
+        state: present
+    
+    - name: Install Themes
+      apt:
+        name:
+          - ubsms-theme
         state: present
     
