@@ -2,7 +2,7 @@
   become: yes
   vars:
     ansible_python_interpreter: "/usr/bin/python3"
-    user_account: livestreamer
+    user_account: livestream
   tasks:
     - name: Install packages
       apt:
