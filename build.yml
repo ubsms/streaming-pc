@@ -1,5 +1,3 @@
----
-
 - hosts: localhost
   become: yes
   vars:
@@ -14,6 +12,9 @@
           - ffmpeg
           - apt-transport-https
           - plymouth-themes
+          - make
+          - gcc
+          - avahi-daemon
         state: present
     
     - name: Add user
@@ -74,6 +75,5 @@
     - name: Install Themes
       apt:
         name:
-          - ubsms-theme
+          - ubsms-themes
         state: present
-    
